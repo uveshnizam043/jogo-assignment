@@ -111,14 +111,7 @@ background-image: linear-gradient(135deg, #9E77FF 0%, #4C12DC 100%);
   line-height: normal;
 
 }
-.font-level-2{
-  color: #161616;
-font-family: Poppins;
-font-size: 14px;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
-}
+
 .outline-none{
   outline: none;
 }
@@ -163,13 +156,4 @@ line-height: normal;
   padding: 0;
   box-sizing: border-box;
 }
-
-/* :root {
-  --primary-color: #d96aa7;
-  --secondary-color: #422c73;
-  --complimentary-color: #88bfb5;
-  --contrast-color: #f2e527;
-  --light-color: #d2a9d9;
-} */
-
 

@@ -1,0 +1,175 @@
+.text-white{
+  color: white !important;
+}
+.bg-white{
+  background-color: white;
+}
+.text-black{
+  color: balack;
+}
+.bg-primary{
+  background-color: #6D42D8;
+}
+.bg-white{
+  background-color: white;
+}
+.text-primary{
+  color: #6D42D8;
+}
+.bg-primary-gradient{
+  
+background-image: linear-gradient(135deg, #9E77FF 0%, #4C12DC 100%);
+}
+.bg-white{
+  background-color: white;
+}
+.bg-black{
+  background-color: black;
+}
+.overflow-scroll{
+  overflow: scroll;
+}
+.secondary-text__color{
+  color: #171725
+}
+
+.w-100 {
+  width: 100%;
+}
+.w-80{
+  width: 80%;
+}
+
+.flex-center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.d-flex{
+  display: flex;
+}
+.flex-column{
+  flex-direction: column
+}
+.flex-1{
+  flex-grow: 1;
+}
+/* font classes */
+.font-500{
+  font-weight: 500;
+}
+.font-600{
+  font-weight: 600;
+}
+.font-700{
+  font-weight: 700;
+}
+.font-800{
+  font-weight: 800;
+}
+.overflow-hidden{
+  overflow: hidden;
+}
+.h-100vh{
+  height: 100vh;
+}
+.priamry-font{
+  font-family: Poppins;
+}
+.priamry-black{
+  color: #161616;
+}
+.priamry-grey{
+  color: #869aa9 !important;
+}
+.text-12{
+  font-size: 12px;
+}
+.text-13{
+  font-size: 13px;
+}
+.text-14{
+  font-size: 14px;
+}
+.text-15{
+  font-size: 15px;
+}
+.text-16{
+  font-size: 16px;
+}
+.text-17{
+  font-size: 17px;
+}
+.text-18{
+  font-size: 18px;
+}
+
+.font-level-1{
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+
+}
+.font-level-2{
+  color: #161616;
+font-family: Poppins;
+font-size: 14px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+.outline-none{
+  outline: none;
+}
+.border-none{
+  border: none;
+}
+
+  .cursor-pointer{
+  cursor: pointer;
+
+  }
+  .msg-time__text{
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  
+    /* width */
+::-webkit-scrollbar {
+  width:4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #bdbdbd;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #b5b5b5;
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* :root {
+  --primary-color: #d96aa7;
+  --secondary-color: #422c73;
+  --complimentary-color: #88bfb5;
+  --contrast-color: #f2e527;
+  --light-color: #d2a9d9;
+} */
+
+

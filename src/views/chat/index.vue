@@ -243,8 +243,8 @@ function closeNav() {
   align-items: end;
   width: 100%;
 }
-.mobile-filter{
-  margin-top: 0.4rem !important
+.mobile-filter {
+  margin-top: 0.4rem !important;
 }
 .msg-input {
   padding: 0.5rem 1rem;
@@ -356,7 +356,7 @@ select:focus > option:checked {
     align-content: center;
   }
   .chat-contatiner {
-    padding: .5rem 1.313rem 0 1.313rem;
+    padding: 0.5rem 1.313rem 0 1.313rem;
     min-height: calc(100vh - 135px);
   }
   .msg-input {

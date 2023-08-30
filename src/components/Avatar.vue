@@ -37,14 +37,4 @@ const firstTwoCharcter = computed(() => {
   border-radius: 3rem;
   font-weight: 600;
 }
-@media screen and (max-width: 1024px) {
-  .avatar {
-    min-width:2rem;
-    min-height:2rem;
-    max-width:2rem;
-    max-height:2rem;
-    border-radius: 1rem !important;
-    font-weight: 600;
-  }
-}
 </style>

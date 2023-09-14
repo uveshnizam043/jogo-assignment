@@ -1,18 +1,9 @@
 import { defineStore } from "pinia";
 import moment from "moment";
-const avtarBgColors = [
-  "#8D6E63",
-  "#80CBC4",
-  "#FFB067",
-  "#C175C8",
-  "#FB7676",
-  "#DCE775",
-  "#FFB74D",
-];
+
 export const usersStore = defineStore("users", {
   state: () => ({
     users: [],
-    colorCount: 0,
     login: false,
     activeUser: null,
     backMesageList: [],
@@ -23,18 +14,8 @@ export const usersStore = defineStore("users", {
     isLogin: (state) => state.login,
   },
   actions: {
-    addUser(params) {
-      if (this.colorCount < this.users.length) {
-        this.colorCount = 0;
-      }
-      const user = {
-        _id: this.users.length + 1,
-        name: params,
-        color: avtarBgColors[this.colorCount],
-      };
-      this.users.push(user);
-
-      this.colorCount = this.colorCount + 1;
+    addUser(userList) {
+      this.users = [...userList];
     },
     addMsg(msg) {
       this.backMesageList.push(msg);
@@ -43,17 +24,26 @@ export const usersStore = defineStore("users", {
     updateActiveUser(user) {
       this.activeUser = user;
     },
-    logout() {
+    logout1() {
       const index = this.users.findIndex(
         (ele, index) => ele._id == this.activeUser._id
       );
-      console.log(index);
       this.users.splice(index, 1);
       this.activeUser = this.users[0];
       if (!this.users.length) {
         this.backMesageList = [];
         this.messageList = [];
-        this.colorCount = 0;
+      }
+    },
+    logoutById(id) {
+      const index = this.users.findIndex((ele) => ele._id == id);
+      if (index >= 0) {
+        this.users.splice(index, 1);
+        this.activeUser = this.users[0];
+        if (!this.users.length) {
+          this.backMesageList = [];
+          this.messageList = [];
+        }
       }
     },
     filterMessage(filterType) {

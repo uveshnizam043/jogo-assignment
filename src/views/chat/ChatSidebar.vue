@@ -5,14 +5,13 @@
 
       <!-- <div> -->
       <div class="priamry-black text-18 font-500 user-text">Users</div>
-      <div class="users-list" >
+      <div class="users-list">
         <div
           v-for="(user, index) of users"
           @click="updateActiveUser(user)"
           :key="index"
           class="users cursor-pointer"
-          :class="{ 'bg-active': store.activeUser._id == user._id }"
-        
+          :class="{ 'bg-active': store.activeUser?._id == user?._id }"
         >
           <Avatar :name="user.name" :bgColor="user.color" />
           <div
@@ -44,7 +43,7 @@
       >
         <div
           class="flex- bg-white text-primary logout-btn"
-          @click="logoutUser"
+          @click="logoutUser(store.activeUser._id)"
           style="
             background-color: transparent;
             display: inline-flex;
@@ -75,6 +74,8 @@ import Avatar from "../../components/Avatar.vue";
 import moment from "moment";
 import { usersStore } from "../../stores/users";
 import router from "../../router/index";
+// import io from "socket.io-client";
+import socket from "../../socket";
 
 import { useRoute } from "vue-router";
 const route = useRoute();
@@ -83,30 +84,53 @@ const emit = defineEmits(["closeNav", "logout"]);
 const props = defineProps({
   mobilSidebar: Boolean,
 });
-// refs
+
+// state
 const message = ref(null);
-const users = ref([]);
 const activeFilter = ref("");
+// computed property
+const users = computed(() => {
+  if (store.getUsers.length) {
+    const users = [...store.getUsers];
+    return users;
+  } else {
+    return [];
+  }
+});
+//hooks
 onMounted(() => {
-  users.value = store.getUsers;
   users.value.length &&
     users.value.filter((ele) => {
       if (ele._id == Number(route.query?.user)) {
         store.updateActiveUser(ele);
       }
     });
-  if (!users) {
+  if (!users.value) {
     router.push({
       name: "home",
     });
   }
+
+  socket.on("logout_user", async (id) => {
+    store.logoutById(id);
+    if (!store.users.length) {
+      location.reload();
+      router.push({
+        name: "home",
+      });
+    }
+  });
+  
 });
 
-
 //methods
-const logoutUser = () => {
-  store.logout();
+const logoutUser = async (id) => {
+  await socket.emit("logout_user", id);
+  store.logoutById(store.activeUser._id);
   emit("logout");
+  if (!store.users.length) {
+    location.reload();
+  }
 };
 
 const updateActiveUser = (user) => {
@@ -117,10 +141,8 @@ const updateActiveUser = (user) => {
 };
 
 const changeFilter = (value) => {
-  console.log(value);
   activeFilter.value = value;
 };
-// const activeUser = ref(null);
 const addMessage = () => {
   if (message.value) {
     const message1 = {
@@ -163,9 +185,6 @@ const addMessage = () => {
 }
 
 @media screen and (max-width: 1024px) {
-  .sidenav {
-    /* min-width: 45%; */
-  }
   .user-text {
     padding: 1rem 0 1rem 2.5rem !important;
     line-height: normal;

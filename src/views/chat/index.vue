@@ -29,6 +29,9 @@
               </div>
             </div>
             <div class="d-flex desktop-filter flex-center">
+              <small v-if="typing" class="typing-text">
+                <i>{{ typing }} is typing...</i>
+              </small>
               <div
                 v-for="(fitler, index) in filters"
                 :key="index"
@@ -56,13 +59,16 @@
                   {{ fitler.text }}
                 </option>
               </select>
+              <small v-if="typing" class="typing-text" style="margin-top: 2px;">
+                <i>{{ typing }} is typing...</i>
+              </small>
             </div>
           </div>
 
           <div class="chat-contatiner">
             <div v-for="(msg, index) in store.messageList" :key="index">
               <div
-                v-if="msg.user_id != store.activeUser._id"
+                v-if="msg?.user_id != store?.activeUser?._id"
                 style="margin-bottom: 2rem"
               >
                 <ChatMessage
@@ -81,12 +87,11 @@
                 <ActiveUserChat
                   :msgContent="msg.msgContent"
                   :userName="msg.userName"
-                  :show-time="
-                    store.messageList.length == index + 1 ? true : false
-                  "
+                  :show-time="showTime(index)"
                 />
               </div>
             </div>
+            <div id="anchor"></div>
           </div>
 
           <div
@@ -140,38 +145,20 @@
 
 <script setup>
 import ChatSidebar from "./ChatSidebar.vue";
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed, watch, onBeforeUnmount } from "vue";
 import Avatar from "../../components/Avatar.vue";
 import ChatMessage from "./ChatMessage.vue";
 import ActiveUserChat from "./ActiveUserChat.vue";
 import moment from "moment";
 import { usersStore } from "../../stores/users";
 import router from "../../router/index";
+import io from "socket.io-client";
+const socket = io.connect("http://localhost:3001");
 
 import { useRoute } from "vue-router";
 const route = useRoute();
-
 const store = usersStore();
-onMounted(() => {
-  users.value = store.getUsers;
-  //  navigate to login page if there is no users
-  checkUserList();
-  //updating active users
-  if (users.value.length) {
-    const index = users.value.findIndex(
-      (ele, index) => ele._id == Number(route.query?.user)
-    );
-    store.updateActiveUser(users.value[index]);
-  }
-});
-const checkUserList = () => {
-  if (!users.value.length) {
-    router.push({
-      name: "home",
-    });
-  }
-};
-
+const typing = ref(false);
 const message = ref(null);
 const filters = ref([
   {
@@ -187,38 +174,93 @@ const filters = ref([
     value: "last_7_days",
   },
 ]);
-const activeUser = ref(null);
 const activeFilter = ref("all");
 const users = ref([]);
 
+onMounted(() => {
+  users.value = store.getUsers;
+  //  navigate to login page if there is no users
+  checkUserList();
+  //updating active users
+  if (users.value.length) {
+    const index = users.value.findIndex(
+      (ele, index) => ele._id == Number(route.query?.user)
+    );
+    store.updateActiveUser(users.value[index]);
+    //send message event
+    socket.on("send_message", (data) => {
+      store.addMsg(data);
+    });
+  }
+  socket.on("typing", (data) => {
+    typing.value = data;
+  });
+  socket.on("stoptyping", () => {
+    typing.value = false;
+  });
+});
+onBeforeUnmount(() => {
+  socket.emit("disconnect-connection", store.activeUser);
+});
+
+//computed
+const showTime = computed(() => {
+  return (index) => {
+    if (
+      store.messageList.length == index + 1 ||
+      store.messageList[index + 1].user_id != store.messageList[index].user_id
+    ) {
+      return true;
+    }
+    return false;
+  };
+});
+
+//methods
+const checkUserList = () => {
+  if (!users.value.length) {
+    router.push({
+      name: "home",
+    });
+  }
+};
+
+//watch
+watch(message, async (newValue) => {
+  newValue
+    ? socket.emit("typing", store.activeUser?.name)
+    : socket.emit("stoptyping");
+});
+
+//methods
 const updateActiveUser = (user) => {
   store.updateActiveUser({ name: user.name, _id: user._id });
 };
-
 const updateFilter = (value) => {
   activeFilter.value = value;
   store.filterMessage(activeFilter.value);
 };
-
 const addMessage = () => {
   if (message.value) {
-    const message1 = {
+    const messagObj = {
       msgContent: message.value,
       dateTime: moment().format("YYYY-MM-DD hh:mm A"),
       user_id: store.activeUser?._id,
       userName: store.activeUser?.name,
     };
-    store.addMsg(message1);
+    store.addMsg(messagObj);
     message.value = null;
+    socket.emit("send_message", messagObj);
+    // scroll to bottom when new message appear
+    document.scrollingElement.scroll(0, 1);
   }
 };
-function openNav() {
+const openNav = () => {
   document.getElementById("mySidenav").style.width = "250px";
-}
-
-function closeNav() {
+};
+const closeNav = () => {
   document.getElementById("mySidenav").style.width = "0";
-}
+};
 </script>
 
 <style scoped>
@@ -244,6 +286,8 @@ function closeNav() {
   width: 100%;
 }
 .mobile-filter {
+  display: flex;
+  flex-direction: column;
   margin-top: 0.4rem !important;
 }
 .msg-input {
@@ -350,7 +394,7 @@ select:focus > option:checked {
     display: none;
   }
   .top-header {
-    padding: 1rem 1.313rem;
+    padding: 1rem 1.313rem !important;
     display: flex;
     justify-content: space-between;
     align-content: center;
@@ -431,5 +475,17 @@ select option {
   font-size: 14px;
   font-weight: 400;
   line-height: normal;
+}
+.chat-contatiner * {
+  overflow-anchor: none;
+}
+#anchor {
+  overflow-anchor: auto;
+  height: 0px;
+}
+.typing-text {
+  margin-right: 1rem;
+  font-size: 1rem;
+  color: grey;
 }
 </style>

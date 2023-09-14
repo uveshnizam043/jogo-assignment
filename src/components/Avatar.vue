@@ -36,5 +36,6 @@ const firstTwoCharcter = computed(() => {
   max-height: 2.5rem;
   border-radius: 3rem;
   font-weight: 600;
+  text-transform: uppercase;
 }
 </style>
